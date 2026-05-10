@@ -15,7 +15,6 @@ public partial class Player : CharacterBody3D
     [Export] public float Gravity { get; set; } = 9.8f;
     [Export] public float MouseSensitivity { get; set; } = 0.002f;
     
-    public PlayerState PlayerState => _playerState;
 
     private Part _head;
     private Part _body;
@@ -54,19 +53,7 @@ public partial class Player : CharacterBody3D
                 rotation.X = Mathf.Clamp(rotation.X, -0.8f, 0.4f);
                 _cameraArm.Rotation = rotation;
             }
-            
-            if (IsReadied)
-            {
-                if (Input.IsMouseButtonPressed(MouseButton.Middle))
-                {
-                    RotateY(-mouseMotion.Relative.X * MouseSensitivity);
-            
-                    var rotation = _cameraArm.Rotation;
-                    rotation.X += -mouseMotion.Relative.Y * MouseSensitivity;
-                    rotation.X = Mathf.Clamp(rotation.X, -0.8f, 0.4f);
-                    _cameraArm.Rotation = rotation;
-                }
-            }
+
         }
 
         if (@event.IsActionPressed("ui_cancel"))
@@ -78,17 +65,18 @@ public partial class Player : CharacterBody3D
         {
             Input.MouseMode = Input.MouseModeEnum.Visible;
             
-            if (_rightArm.ReadyState == false)
-                _rightArm.ReadyArm();
+            if (_playerState == PlayerState.Explore)
+                SetPlayerState(PlayerState.Combat);
         }
 
         if (@event.IsActionPressed("sheath"))
         {
-            if (Input.MouseMode == Input.MouseModeEnum.Visible)
-                Input.MouseMode = Input.MouseModeEnum.Captured;
-            if (Input.MouseMode == Input.MouseModeEnum.Visible)
-                Input.MouseMode = Input.MouseModeEnum.Captured;
-            _rightArm.ReadyArm();
+            if (_playerState == PlayerState.Combat)
+                SetPlayerState(PlayerState.Explore);
+            else
+            {
+                SetPlayerState(PlayerState.Combat);
+            }
         }
     }
 
@@ -121,10 +109,21 @@ public partial class Player : CharacterBody3D
 
     private void SetPlayerState(PlayerState newState)
     {
-        switch (PlayerState)
+        if (newState == _playerState)
+            return;
+        
+        switch (newState)
         {
             case PlayerState.Combat:
-                
+                GetNode<ArmPart>("RightArm").ReadyArm();
+                GetNode<CameraArm>("CameraArm").CombatCamera();
+                _playerState = newState;
+                break;
+            case PlayerState.Explore:
+                GetNode<ArmPart>("RightArm").UnReadyArm();
+                GetNode<CameraArm>("CameraArm").ExploreCamera();
+                _playerState = newState;
+                break;
         }
     }
 }

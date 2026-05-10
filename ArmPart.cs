@@ -11,22 +11,16 @@ public partial class ArmPart : Part
 
     public void ReadyArm()
     {
-        _readyState = !_readyState;
-        
-        if (_readyState)
-        {
-            var rotation = this.Rotation;
-            rotation.X = Mathf.DegToRad(90);
-            this.Rotation = rotation;
-        }
+        var rotation = this.Rotation;
+        rotation.X = 90;
+        this.Rotation = rotation;
+    }
 
-        if (!_readyState)
-        {
-            var rotation = this.Rotation;
-            rotation.X = Mathf.DegToRad(0);
-            this.Rotation = rotation;
-        }
-        
+    public void UnReadyArm()
+    {
+        var rotation = this.Rotation;
+        rotation.X = 0;
+        this.Rotation = rotation;
     }
 }
 
