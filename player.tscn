@@ -1,0 +1,77 @@
+[gd_scene load_steps=12 format=3 uid="uid://c6iuoatwh62t3"]
+
+[ext_resource type="Script" uid="uid://bl3wla7kb1xxn" path="res://Player.cs" id="1_4flbx"]
+[ext_resource type="Script" uid="uid://byp8us12cnj0y" path="res://Part.cs" id="2_i3pqv"]
+[ext_resource type="Script" uid="uid://cjoss1utjm14o" path="res://ArmPart.cs" id="3_hqtel"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_i7llj"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cjeqb"]
+albedo_color = Color(0, 0.53070724, 0.53074926, 1)
+normal_enabled = true
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_y4ur2"]
+material = SubResource("StandardMaterial3D_cjeqb")
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_4flbx"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_onrkg"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_i3pqv"]
+size = Vector3(0.5, 1, 0.5)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hqtel"]
+
+[sub_resource type="PrismMesh" id="PrismMesh_sweqy"]
+material = SubResource("StandardMaterial3D_hqtel")
+size = Vector3(0.5, 1, 0.2)
+
+[node name="Player" type="CharacterBody3D"]
+script = ExtResource("1_4flbx")
+MoveSpeed = 10.0
+
+[node name="Body" type="CollisionShape3D" parent="."]
+shape = SubResource("CapsuleShape3D_i7llj")
+script = ExtResource("2_i3pqv")
+
+[node name="BodyMesh" type="MeshInstance3D" parent="Body"]
+mesh = SubResource("CapsuleMesh_y4ur2")
+skeleton = NodePath("../..")
+
+[node name="Head" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+shape = SubResource("SphereShape3D_4flbx")
+script = ExtResource("2_i3pqv")
+
+[node name="HeadMesh" type="MeshInstance3D" parent="Head"]
+mesh = SubResource("SphereMesh_onrkg")
+
+[node name="CameraArm" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+
+[node name="Camera3D" type="Camera3D" parent="CameraArm"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5)
+current = true
+
+[node name="LeftArm" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.74158096, 0, 0)
+shape = SubResource("BoxShape3D_i3pqv")
+script = ExtResource("3_hqtel")
+
+[node name="LeftArmMesh" type="MeshInstance3D" parent="LeftArm"]
+transform = Transform3D(4.3711385e-08, -3.8213705e-15, -1, -8.742277e-08, -0.99999994, 0, -0.99999994, 8.742277e-08, -4.371139e-08, 0.1, 0, 0)
+mesh = SubResource("PrismMesh_sweqy")
+
+[node name="RightArm" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.65, 0.5, 0)
+script = ExtResource("3_hqtel")
+PartType = 2
+
+[node name="RightArmShape" type="CollisionShape3D" parent="RightArm"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+shape = SubResource("BoxShape3D_i3pqv")
+
+[node name="RightArmMesh" type="MeshInstance3D" parent="RightArm"]
+transform = Transform3D(-4.3711385e-08, -8.742277e-08, -1, 0, -0.99999994, 8.742278e-08, -0.99999994, 3.8213705e-15, 4.371139e-08, 0, -0.5, 0)
+mesh = SubResource("PrismMesh_sweqy")
+skeleton = NodePath("../RightArmShape")
